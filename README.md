@@ -3,3 +3,4 @@ Projekt utworzony w ramach pracy na przedmiocie Systemy Transakcji Elektroniczny
 Grupa projektowa:
 - Katarzyna Kozłowska [D3]
 - Maciej Sobieszczak [D3]
+Witryna dostępna pod adresem https://systranselektrkataka.maciejsobieszczyk.com/
