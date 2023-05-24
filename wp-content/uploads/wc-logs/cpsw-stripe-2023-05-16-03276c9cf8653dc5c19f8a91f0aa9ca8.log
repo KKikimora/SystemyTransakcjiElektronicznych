@@ -1,0 +1,10 @@
+2023-05-16T19:28:09+00:00 ERROR Stripe not initialized
+----
+2023-05-16T19:28:09+00:00 INFO Begin processing payment with Przelewy24 for order 5502 for the amount of 64.00
+2023-05-16T19:28:09+00:00 ERROR Stripe not initialized
+----
+2023-05-16T19:39:23+00:00 ERROR Stripe not initialized
+----
+2023-05-16T19:39:23+00:00 INFO Begin processing payment with Przelewy24 for order 5504 for the amount of 104.90
+2023-05-16T19:39:23+00:00 ERROR Stripe not initialized
+----

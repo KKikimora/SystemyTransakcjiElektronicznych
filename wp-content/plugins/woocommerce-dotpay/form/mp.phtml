@@ -1,0 +1,203 @@
+<?php
+
+if($this->getAmountForWidget() > 0) {$amountforchannelsmp = $this->getAmountForWidget();}else{ $amountforchannelsmp = '100.00';} 
+
+if(!is_array($this->CheckChannelEnable(0,$amountforchannelsmp)) || !in_array(self::$mpChannel,$this->CheckChannelEnable(0,$amountforchannelsmp))){
+	?>
+	<script type = "text/javascript" >
+		console.log('%c<?php echo "Masterpass (".self::$mpChannel."): channel is disabled for this order. This method has been blocked."; ?>', 'background: #cfcfcf; color: brown;');
+		
+		jQueryDotpayCodeMP = function(){
+			if (typeof jQuery != 'undefined') {
+				jQuery(document).ready(function () {
+					jQuery('li.payment_method_Dotpay_mp').remove();					
+				});
+			};	
+		};				
+	
+	</script>  
+<?php
+
+}else{
+
+ $CheckMPEnabled = $this->CheckChannelDisable(self::$mpChannel);
+
+ $getdatamp = $this->getDotpayChannels($amountforchannelsmp);
+
+ if(isset($CheckMPEnabled['is_disable']) && (string)$CheckMPEnabled['is_disable'] == 'true')
+ {	
+	$MPmessage = $CheckMPEnabled['disable_message'];
+	 ?>
+		<script type = "text/javascript" >
+            console.log('%c<?php echo "Masterpass (".self::$mpChannel."): channel is disabled for this order: ".$MPmessage.". This method has been blocked."; ?>', 'background: #cfcfcf; color: brown;');
+			
+			jQueryDotpayCodeMP = function(){
+			    if (typeof jQuery != 'undefined') {
+					jQuery(document).ready(function () {
+						jQuery('li.payment_method_Dotpay_mp').remove();					
+					});
+				};	
+			};				
+		
+		</script>  
+<?php
+ } else if (isset($getdatamp) && !empty($getdatamp) && (int)$CheckMPEnabled['id'] == "") {
+?>
+    <script type = "text/javascript">
+    console.log('%c<?php echo "Masterpass (".self::$mpChannel."): channel not available for this order. This method has been blocked."; ?>', 'background: #cfcfcf; color: brown;');
+    
+    jQueryDotpayCodeMP = function(){
+        if (typeof jQuery != 'undefined') {
+            jQuery(document).ready(function () {
+                jQuery('li.payment_method_Dotpay_mp').remove();					
+            });
+        };	
+    };				
+</script>
+
+<?php
+
+ } else {
+
+ ?>	 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<?php if((bool)$this->isTestMode()) echo "<br><p style=\"font-size:1.0em;text-align:center;background-color:#fff1f0;color:#d85030;border:1px solid rgba(216,80,48,0.3);padding:20px;border-radius:3px \"><strong><i class='material-icons'>notification_important</i> ".__('Attention!', 'dotpay-payment-gateway')."</strong> ".__('Test mode is activated. This is just a payment simulation.', 'dotpay-payment-gateway')."</p>"; ?>
+<?php include(__DIR__.'/agreements.phtml'); ?>
+
+<script type = "text/javascript" >
+
+
+// check agreements - bylaw
+
+CheckBylawMPGo = function(){
+
+jQuery(document).ready(function () {
+
+    if (jQuery("label.dotpay_agreements > input[name=bylaw]:checked").parents('li.payment_method_Dotpay_mp').length < 1) {
+        console.log('%cSelect first PayPro S.A. Regulations of Payments !', 'background:red;color:#fff');
+        jQuery('li.payment_method_Dotpay_mp').find("label#agreements_bylaw").css({
+            "background-color": "#ffeeed",
+            "padding": "3px",
+            "border-style": "solid",
+            "border-width": "1px",
+            "border-color": "#fd0c0c"
+        });
+        jQuery("button[name='woocommerce_checkout_place_order']").prop('disabled', true);
+        if (jQuery('div#payment div.form-row button#place_order').length > 0) {
+            jQuery('div#payment div.form-row button#place_order').prop('disabled', true);
+        }
+    } else {
+        console.log('MP: Payment regulations accepted');
+        jQuery('li.payment_method_Dotpay_mp').find("label#agreements_bylaw").css({
+            "background-color": "",
+            "padding": "",
+            "border-style": "",
+            "border-width": "0px",
+            "border-color": ""
+        });
+        jQuery("button[name='woocommerce_checkout_place_order']").prop('disabled', false);
+        if (jQuery('div#payment div.form-row button#place_order').length > 0) {
+            jQuery('div#payment div.form-row button#place_order').prop('disabled', false);
+        }
+    }
+
+});
+
+jQuery(function ($) {
+    //$('input#dp_agreements_bylaw').change(function () {
+    $('input#dp_agreements_bylaw').parents('li.payment_method_Dotpay_mp').change(function () {    
+        //if ($(this).is(":checked")) {
+        if ($("label.dotpay_agreements > input[name=bylaw]:checked").parents('li.payment_method_Dotpay_mp').length > 0) {
+            jQuery("button[name='woocommerce_checkout_place_order']").prop('disabled', false);
+            console.log('MP: Payment regulations accepted');
+            jQuery('li.payment_method_Dotpay_mp').find("label#agreements_bylaw").css({
+                "background-color": "",
+                "padding": "",
+                "border-style": "",
+                "border-width": "0px",
+                "border-color": ""
+            });
+        } else {
+            console.log('%cMP: Select first PayPro S.A. Regulations of Payments!', 'background:red;color:#fff');
+            jQuery('li.payment_method_Dotpay_mp').find("label#agreements_bylaw").css({
+                "background-color": "#ffeeed",
+                "padding": "3px",
+                "border-style": "solid",
+                "border-width": "1px",
+                "border-color": "#fd0c0c"
+            });
+
+            if (jQuery("button[name='woocommerce_checkout_place_order']").length > 0) {
+                jQuery("button[name='woocommerce_checkout_place_order']").prop('disabled', true);
+            } else if (jQuery('div#payment div.form-row button#place_order').length > 0) {
+                jQuery('div#payment div.form-row button#place_order').prop('disabled', true);
+            }
+
+        }
+    });
+});
+
+}
+
+
+CheckBylawMP = function () {
+jQuery(document).ready(function () {
+
+    if (jQuery('li.payment_method_Dotpay_mp > input#payment_method_Dotpay_mp:checked').length > 0) {
+        CheckBylawMPGo();
+    }
+
+});
+}
+
+    jQueryEnableButtonMP = function(){
+        jQuery("button[name='woocommerce_checkout_place_order']").prop('disabled', false);
+        jQuery('#dotpay_empty_channel').remove();
+        jQuery('p.Nochannels').hide();
+    };
+
+    jQueryDotpayCodeMP = function(){
+        if (typeof jQuery != 'undefined') {
+            jQuery(document).ready(function () {          
+                if(jQuery('input#payment_method_Dotpay_mp').is(':checked')) { 
+                    console.log('%cMasterpass method via Dotpay is checked','background: #cfcfcf; color: green;');
+                    jQueryEnableButtonMP();
+                    CheckBylawMP();
+		        }
+            });
+
+            jQuery("ul.wc_payment_methods input[type=radio]").on("change", function () {
+                    if (this.checked) {
+                        if (this.value == 'Dotpay_mp') {                           
+                            console.log('%cMasterpass method via Dotpay is checked manually','background: #cfcfcf; color: green;');
+                            jQueryEnableButtonMP();
+                            CheckBylawMP();
+                        };
+                    };
+            });
+        };
+    };
+ </script>   
+ 
+<?php	 
+ }
+ }// check if exist channel to order
+ ?>
+<script type = "text/javascript" >
+    if(window.jQuery){
+        jQueryDotpayCodeMP();
+
+    } else{   
+        var script = document.createElement('script'); 
+        document.head.appendChild(script);  
+        script.type = 'text/javascript';
+        script.src = "//ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js";
+
+        script.onload = jQueryDotpayCodeMP;
+    }
+ </script>
+<?php
+        if (null == WC()->session->get('dotpay_payment_one_product_name')) {
+			$this->setOneProductName($this->getProductName());
+        }   
+?>
